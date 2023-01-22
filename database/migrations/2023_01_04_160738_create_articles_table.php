@@ -22,10 +22,10 @@ return new class extends Migration
             $table->foreignIdFor(Author::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Category::class)->constrained()->cascadeOnDelete();
 
-            $table->string('title');
+            $table->string('title')->unique();
 
             $table->text('content');
-            $table->datetime('posted_at');
+            $table->datetime('posted_at')->useCurrent();
 
             $table->timestamps();
         });

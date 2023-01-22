@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\ArticlesFormComponent;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,27 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::middleware([
+    'auth:sanctum',
+    config('jetstream.auth_session'),
+    'verified'
+])->group(function () {
+
+    Route::view('/', 'home')->name('home');
+
+    Route::middleware('verify.role:ADMIN,SUPER_ADMIN')->group(function () {
+        Route::view('categories', 'categories')->name('categories');
+        Route::view('articles', 'articles')->name('articles');
+    });
+
+    Route::middleware('verify.role:SUPER_ADMIN')->group(function () {
+        Route::view('authors', 'authors')->name('authors');
+        Route::view('users', 'users')->name('users');
+    });
+
+    Route::middleware('verify.author')->group(function () {
+        Route::get('articles-form/{article?}', ArticlesFormComponent::class)->name('articles-form')->middleware('verify.article');
+        Route::post('articles-form/uploadUrl', [ArticlesFormComponent::class, 'uploadUrl'])->name('articles-upload-url');
+        Route::view('my-articles', 'my-articles')->name('my-articles');
+    });
 });

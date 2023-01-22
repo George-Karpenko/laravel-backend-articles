@@ -11,7 +11,29 @@ class Author extends Model
 
 
     protected $fillable = [
-        'title',
-        'content',
+        'first_name',
+        'last_name',
     ];
+
+    public function fullName()
+    {
+        return "$this->first_name $this->last_name";
+    }
+
+    /**
+     * Get the articles for the author.
+     */
+    public function articles()
+    {
+        return $this->hasMany(Article::class);
+    }
+
+
+    /**
+     * Get the user associated with the author.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
